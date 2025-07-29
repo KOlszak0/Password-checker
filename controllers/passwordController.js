@@ -1,13 +1,21 @@
 const express = require('express')
-const crypto = require('crypto')
+const bcrypt = require('bcrypt')
 
-const generateHash = (req, res) => {
+const saltRounds = 10
+
+const generateHash = async (req, res) => {
 	const password = req.body.password
-	const hash = crypto.createHash('sha256')
-	hash.update(password)
-	const result = hash.digest('hex')
-	res.json({ hash: result })
-	console.log('Password recieved', result)
+	bcrypt.hash(password, saltRounds, function (err, hash) {
+		try {
+			res.json({ hash: hash })
+			console.log('Password recieved', hash)
+		} catch {
+			console.log(err)
+		}
+	})
 }
+
+
+
 
 module.exports = { generateHash }
